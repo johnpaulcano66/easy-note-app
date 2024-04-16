@@ -104,12 +104,12 @@ include_once 'dashboard.php';
         <form id="editNoteForm">
             <input type="hidden" id="editNoteId" value="">
             <div class="form-group">
-                <label for="editTitle">Title:</label>
-                <input type="text" id="editTitle" name="title" required>
+                <label for="editTitle" style="border: 1px solid #ccc; padding: 10px; border: 1px solid #ccc;      border-radius: 5px;">Title:</label>
+                <input type="text" id="editTitle" name="title"  style="padding: 10px 10px">
             </div>
             <div class="form-group">
-                <label for="editContent">Content:</label>
-                <textarea id="editContent" name="content" rows="6" required></textarea>
+                <label for="editContent" style="border: 1px solid #ccc; padding: 10px; border: 1px solid #ccc;      border-radius: 5px;">Content:</label>
+                <textarea id="editContent" name="content" class="form-control form-control-textarea" rows="10" cols="50" ></textarea>
             </div>
         </form>
     </div>

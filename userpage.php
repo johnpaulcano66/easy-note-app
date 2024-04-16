@@ -282,8 +282,11 @@ if (isset($_SESSION['user_name'])) {
 
 #loadingMessage,
 #successMessage,
+#errorMessage,
 #emailLoadingMessage,
 #emailSuccessMessage,
+#emailErrorMessage,
+#emailStatus::before,
 #passwordLoadingMessage,
 #passwordSuccessMessage {
     display: none;
@@ -294,8 +297,11 @@ if (isset($_SESSION['user_name'])) {
 
 #loadingMessage::before,
 #successMessage::before,
+#errorMessage::before,
 #emailLoadingMessage::before,
 #emailSuccessMessage::before,
+#emailErrorMessage::before,
+#emailStatus::before,
 #passwordLoadingMessage::before,
 #passwordSuccessMessage::before {
     display: inline-block;
@@ -364,12 +370,14 @@ if (isset($_SESSION['user_name'])) {
         <div class="user-details-container">
     <div class="user-details">
         <div class="user-label">
-        <label>Account Name</label>
+            <label>Account Name</label>
             <!-- Loading message -->
-            <div id="loadingMessage"><i class="fa fa-spinner fa-spin"></i> Saving update...</div>
+            <div id="loadingMessage"><i></i> Saving update...</div>
             <!-- Success message -->
             <div id="successMessage"><i class="fa fa-check"></i> Update successful</div>
-            
+            <!-- Error message -->
+            <div id="errorMessage" style="display:none; color:red;"><i class="fa fa-times"></i> Username already exists</div>
+            <div id="usernameStatus" style="margin-left:10px;"></div>
         </div>
         <div class="edit-container">
             <p id="username"><?php echo isset($userName) ? $userName : ""; ?></p>
@@ -390,20 +398,25 @@ if (isset($_SESSION['user_name'])) {
 
 
 
+
 <div class="user-details-container">
     <div class="user-details">
         <div class="user-label">
             <label>Email Address</label>
                <!-- Loading message -->
-               <div id="emailLoadingMessage"><i class="fa fa-spinner fa-spin"></i> Saving update...</div>
+               <div id="emailLoadingMessage"><i></i> Saving update...</div>
             <!-- Success message -->
             <div id="emailSuccessMessage" ><i class="fa fa-check"></i> Update successful</div>
+            <div id="emailErrorMessage" style="display:none; color:red;"><i class="fa fa-times"></i> Email already exists</div>
+                     <div id="emailStatus" style="margin-left:10px;"></div>
         </div>
         <div class="edit-container">
             <p id="email"><?php echo isset($email) ? $email : ""; ?></p>
             <div id="emaileditForm" style="display:none;">
                 <div class="edit-container">
                     <input type="text" id="emailInput" value="<?php echo isset($email) ? $email : ""; ?>">
+
+           
                     <div class="button-container">
                         <button id="emailcancelButton" style="display:none;">Cancel</button>
                         <button id="emailsaveButton" style="display:none;">Save</button>
@@ -417,30 +430,52 @@ if (isset($_SESSION['user_name'])) {
 
 <div class="user-details-container">
     <div class="user-details">
+        <!-- Password Label and Messages -->
         <div class="user-label">
-            <label>Password</label>
+            <label for="password">Password</label>
             <!-- Loading message -->
-            <div id="passwordLoadingMessage" style="display:none;"><i class="fa fa-spinner fa-spin"></i> Saving update...</div>
+            <div id="passwordLoadingMessage" style="display:none;">
+                <i></i> Saving update...
+            </div>
             <!-- Success message -->
-            <div id="passwordSuccessMessage" style="display:none;"><i class="fa fa-check"></i> Update successful</div>
+            <div id="passwordSuccessMessage" style="display:none;">
+                <i class="fa fa-check"></i> Update successful
+            </div>
+            <!-- Error message -->
+            <div id="passwordErrorMessage" style="display:none; color:red;">
+                <i class="fa fa-times"></i> Password update failed
+            </div>
+            <!-- Additional Status -->
+            <div id="passwordStatus" style="margin-left:10px;"></div>
         </div>
+        <!-- Password Edit Form -->
         <div class="edit-container">
+            <!-- Initial Password Display -->
             <p id="password">Change Password Here...</p>
+            <!-- Edit Form -->
             <div id="passwordEditForm" style="display:none;">
                 <div class="edit-container">
+                    <!-- Old Password Input -->
                     <input type="password" id="oldPasswordInput" placeholder="Type your old password...">
+                    <!-- New Password Input -->
                     <input type="password" id="newPasswordInput" placeholder="Type your new password...">
+                    <!-- Confirm New Password Input -->
                     <input type="password" id="confirmPasswordInput" placeholder="Confirm your new password...">
+                    <!-- Button Container -->
                     <div class="button-container">
+                        <!-- Cancel Button -->
                         <button id="passwordCancelButton" style="display:none;">Cancel</button>
+                        <!-- Save Button -->
                         <button id="passwordSaveButton" style="display:none;">Save</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Password Edit Button -->
     <button id="passwordEditButton">Edit</button>
 </div>
+
 
 
 
@@ -491,64 +526,64 @@ document.getElementById("editButton").addEventListener("click", function() {
     document.getElementById("usernameInput").value = document.getElementById("username").textContent.trim();
 });
 
-document.getElementById("saveButton").addEventListener("click", function() {
-    // Retrieve the modified username from the input field
-    var newName = document.getElementById("usernameInput").value.trim();
-
+// Function to update the username asynchronously
+function updateUsername(newName) {
     // Display loading message
     document.getElementById("loadingMessage").style.display = "block";
-    document.getElementById("loadingMessage").textContent = "Saving update...";
-
-    // Hide success message if it's already visible
-    document.getElementById("successMessage").style.display = "none";
-
-    // Update the username displayed on the page
-    document.getElementById("username").textContent = newName;
-
-    // Send the updated username to editprofile.php using AJAX
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "editprofile.php", true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            // Handle response if needed
-            console.log(xhr.responseText);
-            // Hide loading message after 2 seconds
-            setTimeout(function() {
+    document.getElementById("usernameStatus").style.display = "none";
+    
+    // Set a timeout to wait for 1 second before sending the AJAX request
+    setTimeout(function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "checkusername.php", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var response = xhr.responseText;
+                var usernameStatus = document.getElementById("usernameStatus");
+                
+                // Clear previous styles and content
+                usernameStatus.className = "";
+                usernameStatus.innerHTML = "";
+                
+                // Set appropriate icon and message based on response
+                if (response.includes("Invalid")) {
+                    usernameStatus.className = "invalid";
+                    usernameStatus.innerHTML = '<i class="fa fa-times" style="color: red;"></i> ' + response;
+                } else if (response.includes("exists")) {
+                    usernameStatus.className = "exists";
+                    usernameStatus.innerHTML = '<i class="fa fa-times" style="color: red;"></i> ' + response;
+                } else if (response.includes("valid")) {
+                    usernameStatus.className = "valid";
+                    usernameStatus.innerHTML = '<i class="fa fa-check" style="color: green;"></i> ' + response;
+                    // Update the displayed username
+                    document.getElementById("username").textContent = newName;
+                }
+                
+                // Hide the loading message and display the username status
                 document.getElementById("loadingMessage").style.display = "none";
-                // Show success message after hiding loading message
-                document.getElementById("successMessage").style.display = "block";
-                document.getElementById("successMessage").textContent = "Update successful";
-                // Hide the edit form and buttons after 2 seconds
+                usernameStatus.style.display = "block";
+                
+                // Hide the message after 2 seconds
                 setTimeout(function() {
+                    usernameStatus.innerHTML = "";
                     document.getElementById("editForm").style.display = "none";
                     document.getElementById("saveButton").style.display = "none";
                     document.getElementById("cancelButton").style.display = "none";
-                    // Show the username paragraph and edit button
-                    document.getElementById("username").style.display = "block";
                     document.getElementById("editButton").style.display = "block";
-                    // Hide success message after 2 seconds
-                    setTimeout(function() {
-                        document.getElementById("successMessage").style.display = "none";
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }
-    };
-    xhr.send("new_name=" + newName);
-});
+                    document.getElementById("username").style.display = "block";
+                }, 2000);
+            }
+        };
+        xhr.send("new_name=" + encodeURIComponent(newName));
+    }, 1000); // Wait for 1 second before sending the AJAX request
+}
 
-
-
-document.getElementById("cancelButton").addEventListener("click", function() {
-    // Show the username paragraph and edit button
-    document.getElementById("username").style.display = "block";
-    document.getElementById("editButton").style.display = "block";
-
-    // Hide the edit form and buttons
-    document.getElementById("editForm").style.display = "none";
-    document.getElementById("saveButton").style.display = "none";
-    document.getElementById("cancelButton").style.display = "none";
+// Event listener for saving the updated username
+document.getElementById("saveButton").addEventListener("click", function() {
+    var newName = document.getElementById("usernameInput").value.trim();
+    // Update the username asynchronously
+    updateUsername(newName);
 });
 
 
@@ -560,69 +595,92 @@ document.getElementById("passwordEditButton").addEventListener("click", function
 
     // Show the edit form and buttons
     document.getElementById("passwordEditForm").style.display = "block";
-    document.getElementById("passwordSaveButton").style.display = "block";
+     document.getElementById("passwordSaveButton").style.display = "block";
     document.getElementById("passwordCancelButton").style.display = "block";
 });
 
-document.getElementById("passwordSaveButton").addEventListener("click", function() {
-    // Retrieve the modified password from the input fields
-    var oldPassword = document.getElementById("oldPasswordInput").value.trim();
-    var newPassword = document.getElementById("newPasswordInput").value.trim();
-
-    // Display loading message
-    document.getElementById("passwordLoadingMessage").style.display = "block";
-    document.getElementById("passwordLoadingMessage").textContent = "Saving update...";
-
-    // Hide success message if it's already visible
-    document.getElementById("passwordSuccessMessage").style.display = "none";
-
-    // Send the updated password to the server using AJAX
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "editprofile.php", true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            // Handle response if needed
-            console.log(xhr.responseText);
-            // Hide loading message after 2 seconds
-            setTimeout(function() {
-                document.getElementById("passwordLoadingMessage").style.display = "none";
-                // Show success message after hiding loading message
-                document.getElementById("passwordSuccessMessage").style.display = "block";
-                document.getElementById("passwordSuccessMessage").textContent = "Password updated successfully";
-                // Hide the edit form and buttons after 2 seconds
-                setTimeout(function() {
-                    document.getElementById("passwordEditForm").style.display = "none";
-                    document.getElementById("passwordSaveButton").style.display = "none";
-                    document.getElementById("passwordCancelButton").style.display = "none";
-                    // Show the password paragraph and edit button
-                    document.getElementById("password").style.display = "block";
-                    document.getElementById("passwordEditButton").style.display = "block";
-                    // Hide success message after 2 seconds
-                    setTimeout(function() {
-                        document.getElementById("passwordSuccessMessage").style.display = "none";
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }
-    };
-    // Send both old and new passwords to the server
-    xhr.send("old_password=" + oldPassword + "&new_password=" + newPassword);
-});
-
 document.getElementById("passwordCancelButton").addEventListener("click", function() {
-    // Show the password paragraph and edit button
-    document.getElementById("password").style.display = "block";
-    document.getElementById("passwordEditButton").style.display = "block";
-
-    // Hide the edit form and buttons
+    // Hide the password edit form and buttons
     document.getElementById("passwordEditForm").style.display = "none";
     document.getElementById("passwordSaveButton").style.display = "none";
     document.getElementById("passwordCancelButton").style.display = "none";
+    document.getElementById("passwordEditButton").style.display = "block";
+    document.getElementById("password").style.display = "block";
+
+    // Clear previous status messages and input fields
+    document.getElementById("passwordLoadingMessage").style.display = "none";
+    document.getElementById("passwordSuccessMessage").style.display = "none";
+    document.getElementById("passwordErrorMessage").style.display = "none";
+    document.getElementById("oldPasswordInput").value = "";
+    document.getElementById("newPasswordInput").value = "";
+    document.getElementById("confirmPasswordInput").value = "";
 });
 
 
 
+document.getElementById("passwordSaveButton").addEventListener("click", function() {
+    var oldPassword = document.getElementById("oldPasswordInput").value.trim();
+    var newPassword = document.getElementById("newPasswordInput").value.trim();
+    var confirmPassword = document.getElementById("confirmPasswordInput").value.trim();
+
+    // Validate input
+    // if (newPassword !== confirmPassword) {
+    //     alert("New password and confirm password must match.");
+    //     return;
+    // }
+
+    // Display loading message
+    document.getElementById("passwordLoadingMessage").style.display = "block";
+    document.getElementById("passwordSuccessMessage").style.display = "none";
+    document.getElementById("passwordErrorMessage").style.display = "none";
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "changepass.php", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var response = xhr.responseText;
+            var passwordStatus = document.getElementById("passwordStatus");
+
+            // Clear previous styles and content
+            passwordStatus.className = "";
+            passwordStatus.innerHTML = "";
+
+            // Set appropriate icon and message based on response
+            if (response.includes("Incorrect")) {
+                passwordStatus.className = "invalid";
+                passwordStatus.innerHTML = '<i class="fa fa-times" style="color: red;"></i> ' + response;
+            } else if (response.includes("match")) {
+                passwordStatus.className = "invalid";
+                passwordStatus.innerHTML = '<i class="fa fa-times" style="color: red;"></i> ' + response;
+            } else if (response.includes("success")) {
+                passwordStatus.className = "valid";
+                passwordStatus.innerHTML = '<i class="fa fa-check" style="color: green;"></i> ' + response;
+                // You may choose to update any UI elements here if necessary
+            } else {
+                // Show error message
+                passwordStatus.className = "invalid";
+                passwordStatus.innerHTML = '<i class="fa fa-times" style="color: red;"></i> ' + response;
+            }
+
+            // Hide the loading message after processing the response
+            document.getElementById("passwordLoadingMessage").style.display = "none";
+            passwordStatus.style.display = "block";
+
+            // Hide the message after 2 seconds
+            setTimeout(function() {
+                passwordStatus.innerHTML = "";
+            }, 2000);
+        }
+    };
+    xhr.send("old_password=" + encodeURIComponent(oldPassword) + "&new_password=" + encodeURIComponent(newPassword));
+});
+
+
+
+
+
+// <________________________________________________________________________________>
 
 
 document.getElementById("emaileditButton").addEventListener("click", function() {
@@ -639,52 +697,66 @@ document.getElementById("emaileditButton").addEventListener("click", function() 
     document.getElementById("emailInput").value = document.getElementById("email").textContent.trim();
 });
 
-document.getElementById("emailsaveButton").addEventListener("click", function() {
-    // Retrieve the modified email from the input field
-    var newEmail = document.getElementById("emailInput").value.trim();
-
+// Function to update the email asynchronously
+function updateEmail(newEmail) {
     // Display loading message
     document.getElementById("emailLoadingMessage").style.display = "block";
-    document.getElementById("emailLoadingMessage").textContent = "Saving update...";
-
-    // Hide success message if it's already visible
-    document.getElementById("emailSuccessMessage").style.display = "none";
-
-    // Update the email displayed on the page
-    document.getElementById("email").textContent = newEmail;
-
-    // Send the updated email to editprofile.php using AJAX
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "editprofile.php", true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            // Handle response if needed
-            console.log(xhr.responseText);
-            // Hide loading message after 2 seconds
-            setTimeout(function() {
+    document.getElementById("emailStatus").style.display = "none";
+    
+    // Set a timeout to wait for 1 second before sending the AJAX request
+    setTimeout(function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "checkemail.php", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var response = xhr.responseText;
+                var emailStatus = document.getElementById("emailStatus");
+                
+                // Clear previous styles and content
+                emailStatus.className = "";
+                emailStatus.innerHTML = "";
+                
+                // Set appropriate icon and message based on response
+                if (response.includes("Invalid")) {
+                    emailStatus.className = "invalid";
+                    emailStatus.innerHTML = '<i class="fa fa-times" style="color: red;"></i> ' + response;
+                } else if (response.includes("exists")) {
+                    emailStatus.className = "exists";
+                    emailStatus.innerHTML = '<i class="fa fa-times" style="color: red;"></i> ' + response;
+                } else if (response.includes("valid")) {
+                    emailStatus.className = "valid";
+                    emailStatus.innerHTML = '<i class="fa fa-check" style="color: green;"></i> ' + response;
+                    // Update the displayed email
+                    document.getElementById("email").textContent = newEmail;
+                }
+                
+                // Hide the loading message and display the email status
                 document.getElementById("emailLoadingMessage").style.display = "none";
-                // Show success message after hiding loading message
-                document.getElementById("emailSuccessMessage").style.display = "block";
-                document.getElementById("emailSuccessMessage").textContent = "Update successful";
-                // Hide the edit form and buttons after 2 seconds
+                emailStatus.style.display = "block";
+                
+                // Hide the message after 2 seconds
                 setTimeout(function() {
+                    emailStatus.innerHTML = "";
                     document.getElementById("emaileditForm").style.display = "none";
                     document.getElementById("emailsaveButton").style.display = "none";
                     document.getElementById("emailcancelButton").style.display = "none";
-                    // Show the email paragraph and edit button
-                    document.getElementById("email").style.display = "block";
                     document.getElementById("emaileditButton").style.display = "block";
-                    // Hide success message after 2 seconds
-                    setTimeout(function() {
-                        document.getElementById("emailSuccessMessage").style.display = "none";
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }
-    };
-    xhr.send("new_email=" + newEmail);
+                    document.getElementById("email").style.display = "block";
+                }, 2000);
+            }
+        };
+        xhr.send("new_email=" + encodeURIComponent(newEmail));
+    }, 1000); // Wait for 1 second before sending the AJAX request
+}
+
+// Event listener for saving the updated email
+document.getElementById("emailsaveButton").addEventListener("click", function() {
+    var newEmail = document.getElementById("emailInput").value.trim();
+    // Update the email asynchronously
+    updateEmail(newEmail);
 });
+
 
 document.getElementById("emailcancelButton").addEventListener("click", function() {
     // Show the email paragraph and edit button
@@ -697,37 +769,37 @@ document.getElementById("emailcancelButton").addEventListener("click", function(
     document.getElementById("emailcancelButton").style.display = "none";
 });
 
+// <________________________________________________________________________________>
+document.getElementById('imageInput').addEventListener('change', function() {
+    var file = this.files[0];
+    if (file) {
+        var formData = new FormData();
+        formData.append('file', file);
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'upload_image.php', true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var imagePath = xhr.responseText;
+                // Update the displayed profile image with the new path
+                document.querySelector('.profile-img-wrapper img').src = imagePath;
 
+                // Update the profile image icon in the header
+                document.getElementById('profileImageIcon').src = imagePath;
 
-        // Function to handle click event on choose picture button
-        document.getElementById('choosePictureBtn').addEventListener('click', function() {
-            document.getElementById('imageInput').click(); // Click on hidden input field
-        });
-
-        // Function to handle file selection
-        document.getElementById('imageInput').addEventListener('change', function() {
-            var file = this.files[0];
-            if (file) {
-                var formData = new FormData();
-                formData.append('file', file);
-
-                // Send AJAX request to upload or update image
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'upload_image.php'); // PHP script to handle image upload
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        // Image uploaded or updated successfully
-                        console.log('Image uploaded:', xhr.responseText);
-                        // Reload the page to display the updated image
-                        location.reload();
-                    } else {
-                        // Error handling
-                        console.error('Image upload failed:', xhr.responseText);
-                    }
-                };
-                xhr.send(formData);
+                // Update all associated images with the new path
+                var associatedImages = document.querySelectorAll('.associated-image');
+                associatedImages.forEach(function(image) {
+                    image.src = imagePath;
+                });
             }
-        });
+        };
+        xhr.send(formData);
+    }
+});
+
+
+
 
 
    
