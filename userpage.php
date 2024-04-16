@@ -487,29 +487,38 @@ if (isset($_SESSION['user_name'])) {
    
 
     <!-- Hidden input field to select image file -->
-    <!-- <input type="file" id="imageInput" style="display: none;"> -->
+    <input type="file" id="imageInput" style="display: none;">
 
     <script>
-document.getElementById("changePicButton").addEventListener("click", function() {
-    // Trigger a click event on the hidden file input
-    document.getElementById("imageInput").click();
-});
 
-// Handle file selection
-document.getElementById("imageInput").addEventListener("change", function(event) {
-    // Get the selected file
-    var selectedFile = event.target.files[0];
-    
-    // Perform any additional actions (e.g., displaying preview, uploading to server)
-    // For example, you can display a preview of the selected image:
-    var reader = new FileReader();
-    reader.onload = function() {
-        var imgPreview = document.querySelector('.profile-img-wrapper img');
-        imgPreview.src = reader.result;
-    };
-    reader.readAsDataURL(selectedFile);
-});
+document.getElementById('changePicButton').addEventListener('click', function() {
+            document.getElementById('imageInput').click(); // Click on hidden input field
+        });
 
+        // Function to handle file selection
+        document.getElementById('imageInput').addEventListener('change', function() {
+            var file = this.files[0];
+            if (file) {
+                var formData = new FormData();
+                formData.append('file', file);
+
+                // Send AJAX request to upload or update image
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'upload_image.php'); // PHP script to handle image upload
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        // Image uploaded or updated successfully
+                        console.log('Image uploaded:', xhr.responseText);
+                        // Reload the page to display the updated image
+                        location.reload();
+                    } else {
+                        // Error handling
+                        console.error('Image upload failed:', xhr.responseText);
+                    }
+                };
+                xhr.send(formData);
+            }
+        });
 
 
 document.getElementById("editButton").addEventListener("click", function() {
@@ -790,7 +799,8 @@ document.getElementById('imageInput').addEventListener('change', function() {
                 // Update all associated images with the new path
                 var associatedImages = document.querySelectorAll('.associated-image');
                 associatedImages.forEach(function(image) {
-                    image.src = imagePath;
+                    image.src = imagePath; 
+                    location.reload();
                 });
             }
         };
