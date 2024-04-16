@@ -5,6 +5,23 @@ include 'includes/db_conn.php';
 if (isset($_SESSION['user_name'])) {
     $name = $_SESSION['user_name'];
 
+    // Function to delete the user image
+    function deleteUserImage($conn, $name)
+    {
+        $update = "UPDATE user_form SET imgpath = 'uploads/user1.png' WHERE name = '$name'";
+        return mysqli_query($conn, $update);
+    }
+
+    if (isset($_POST['delete_image'])) {
+        // Call the function to delete the image
+        if (deleteUserImage($conn, $name)) {
+            echo 'Image deleted successfully.';
+        } else {
+            echo 'Error: Unable to delete image.';
+        }
+        exit(); // Exit the script after deleting the image
+    }
+
     if (isset($_FILES['file'])) {
         $file = $_FILES['file'];
         $fileName = $file['name'];
@@ -43,6 +60,6 @@ if (isset($_SESSION['user_name'])) {
         } else {
             echo 'Error: File upload failed.';
         }
-    } 
+    }
 }
 ?>

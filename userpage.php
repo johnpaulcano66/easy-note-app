@@ -361,7 +361,7 @@ if (isset($_SESSION['user_name'])) {
                     <input type="file" id="imageInput" style="display: none;">
                     </div>
                     <div class="profile-button-container">
-                        <button class="remove-pic"><span>Remove photo</span></button>
+                        <button id="removePhoto" class="remove-pic"><span>Remove photo</span></button>
                         <button id="changePicButton" class="change-pic"><span>Change photo</span></button>
                     </div>
                 </div>
@@ -520,6 +520,21 @@ document.getElementById('changePicButton').addEventListener('click', function() 
             }
         });
 
+        document.getElementById('removePhoto').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'upload_image.php');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            console.log(xhr.responseText);
+            // Reload the page to reflect the changes
+            location.reload();
+        } else {
+            console.error('Error:', xhr.responseText);
+        }
+    };
+    xhr.send('delete_image=true');
+});
 
 document.getElementById("editButton").addEventListener("click", function() {
     // Hide the username paragraph and edit button
