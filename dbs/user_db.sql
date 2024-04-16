@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 06, 2024 at 02:09 AM
+-- Generation Time: Apr 16, 2024 at 10:52 AM
 -- Server version: 10.4.16-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,11 +42,15 @@ CREATE TABLE `tbl_notes` (
 --
 
 INSERT INTO `tbl_notes` (`n_id`, `id`, `n_title`, `n_content`, `n_date`, `favorite`, `archived`) VALUES
-(34, 2, '12323', '13123', '2024-04-09', 1, 0),
-(38, 1, 'jh', 'hgfh\r\n', '2024-04-05', 1, 0),
 (44, 5, 'dsfdsfdsf', 'sdfsd', '2024-04-05', 1, 0),
-(54, 4, 'thhthf', 'hghfghfgh', '2024-04-05', 1, 0),
-(56, 5, 'dsadsa', 'dsadas', '2024-04-05', 1, 0);
+(56, 5, 'dsadsa', 'dsadas', '2024-04-05', 1, 0),
+(59, 4, 'Holiday', 'Holiday is a day full of happiness as we rest our selves from school and work.', '2024-04-06', 0, 1),
+(61, 4, 'Getting Started with Kubernetes', 'Getting Started with Kubernetes\r\nJune 2, 2020 in Development, howto\r\nIn this document, we will be learning about the basic components of kubernetes and how to create them. Prerequisites We need a hypervisor - install VirtualBox https://www.virtualbox.org/wiki/Downloads This is something that we need inorder to run the nodes for our Kubernetes cluster, they can also be run on bare-metal, but since we will be running the nodes on our laptop, we will be running them on VMs. Install kubectl k8s command line tool From: https://kubernetes.', '2024-04-14', 0, 0),
+(62, 4, 'PE CLASS', 'Bring ball ballpen note book paper bag net basketball shoes and more more more more more', '2024-04-14', 0, 1),
+(63, 4, 'Klase na ugma', 'I hope we will going to pass the exam!', '2024-04-14', 1, 0),
+(64, 4, 'Love', 'Love is an open door!!', '2024-04-14', 1, 0),
+(65, 4, 'MS209', 'Sir Fil Sir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir FilSir Fil', '2024-04-15', 0, 1),
+(66, 60, 'PE', 'pepepepepepepepepepepepepepepe', '2024-04-16', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -59,7 +63,7 @@ CREATE TABLE `user_form` (
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `imgpath` varchar(255) NOT NULL
+  `imgpath` varchar(255) NOT NULL DEFAULT 'uploads/user1.png'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -67,12 +71,14 @@ CREATE TABLE `user_form` (
 --
 
 INSERT INTO `user_form` (`id`, `name`, `email`, `password`, `imgpath`) VALUES
-(1, 'peter', '2@gmail.com', 'c4ca4238a0b923820dcc509a6f75849b', 'uploads/SHESH-1-66155b58546572.13402443_432724415_4289769214578681_2692676894361894885_n.jpg'),
-(2, '22', '1dasd2@gmail.com', '224f6d5086b0e5cb996109d0d74c83b3', 'uploads/SHESH-123-66155c07bdb9e2.05873118_432724415_4289769214578681_2692676894361894885_n-removebg-preview.png'),
-(3, '      2', 'john@gmail.com', '0192023a7bbd73250516f069df18b500', ''),
-(4, 'john', 'berna@gmail.com', '0192023a7bbd73250516f069df18b500', 'uploads/SHESH-john-660fc963bb3545.50216012_bsit.jpg'),
+(4, 'peter4', 'peter62@gmail.com', '0192023a7bbd73250516f069df18b500', 'uploads/SHESH-peter3-661e2509a52204.46492966_ardon.jpg'),
 (5, 'axa', 'axa@gmail.com', '0192023a7bbd73250516f069df18b500', 'uploads/SHESH-axa-66100c334070a4.48311853_apollo.png'),
-(6, 'edwin', 'eduaneortega@gmail.com', '0192023a7bbd73250516f069df18b500', '');
+(55, 'lenron', 'lenron@gmail.com', '0192023a7bbd73250516f069df18b500', ''),
+(56, '   asd', 'john@gmail.com', '0192023a7bbd73250516f069df18b500', ''),
+(57, 'test', 'test@gmail.com', '4acb4bc224acbbe3c2bfdcaa39a4324e', ''),
+(58, 'peter123', 'pedro@gmail.com', '0192023a7bbd73250516f069df18b500', ''),
+(59, 'rexy', 'rexy@gmail.com', '0192023a7bbd73250516f069df18b500', ''),
+(60, 'mike', 'mike@gmail.com', '0192023a7bbd73250516f069df18b500', 'uploads/SHESH-mike-661e3ac3297239.06914121_Picsart_24-01-19_00-28-33-749.png');
 
 --
 -- Triggers `user_form`
@@ -111,13 +117,13 @@ ALTER TABLE `user_form`
 -- AUTO_INCREMENT for table `tbl_notes`
 --
 ALTER TABLE `tbl_notes`
-  MODIFY `n_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `n_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT for table `user_form`
 --
 ALTER TABLE `user_form`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- Constraints for dumped tables

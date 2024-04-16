@@ -779,34 +779,34 @@ document.getElementById("emailcancelButton").addEventListener("click", function(
 });
 
 // <________________________________________________________________________________>
-document.getElementById('imageInput').addEventListener('change', function() {
-    var file = this.files[0];
-    if (file) {
-        var formData = new FormData();
-        formData.append('file', file);
+// document.getElementById('imageInput').addEventListener('change', function() {
+//     var file = this.files[0];
+//     if (file) {
+//         var formData = new FormData();
+//         formData.append('file', file);
         
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'upload_image.php', true);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var imagePath = xhr.responseText;
-                // Update the displayed profile image with the new path
-                document.querySelector('.profile-img-wrapper img').src = imagePath;
+//         var xhr = new XMLHttpRequest();
+//         xhr.open('POST', 'upload_image.php', true);
+//         xhr.onload = function() {
+//             if (xhr.status === 200) {
+//                 var imagePath = xhr.responseText;
+//                 // Update the displayed profile image with the new path
+//                 document.querySelector('.profile-img-wrapper img').src = imagePath;
 
-                // Update the profile image icon in the header
-                document.getElementById('profileImageIcon').src = imagePath;
+//                 // Update the profile image icon in the header
+//                 document.getElementById('profileImageIcon').src = imagePath;
 
-                // Update all associated images with the new path
-                var associatedImages = document.querySelectorAll('.associated-image');
-                associatedImages.forEach(function(image) {
-                    image.src = imagePath; 
-                    location.reload();
-                });
-            }
-        };
-        xhr.send(formData);
-    }
-});
+//                 // Update all associated images with the new path
+//                 var associatedImages = document.querySelectorAll('.associated-image');
+//                 associatedImages.forEach(function(image) {
+//                     image.src = imagePath; 
+//                     location.reload();
+//                 });
+//             }
+//         };
+//         xhr.send(formData);
+//     }
+// });
 
 
 
