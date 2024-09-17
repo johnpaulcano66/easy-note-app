@@ -1,19 +1,27 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+// Start the session at the beginning of the script
+session_start();
+
+// Check if headers have already been sent
+if (headers_sent()) {
+    die('Headers already sent. Cannot start session.');
 }
 
+// Check if user is not logged in
 if (!isset($_SESSION['user_name'])) {
-    header('location: includes/login.php');
+    header('Location: includes/login.php');
     exit();
 }
 
+// Include the database connection file
 @include 'includes/db_conn.php';
 
+// Retrieve the user information from the session
 $userName1 = '';
 $name = $_SESSION['user_name'];
 
-$select = "SELECT id, name FROM user_form WHERE name = '$name'";
+// Optimize query to fetch user id, name, and imgpath in one go
+$select = "SELECT id, name, imgpath FROM user_form WHERE name = '$name'";
 $result = mysqli_query($conn, $select);
 
 if ($result && mysqli_num_rows($result) > 0) {
@@ -22,15 +30,12 @@ if ($result && mysqli_num_rows($result) > 0) {
     $userName1 = $row['name'];
     $_SESSION['user_id'] = $user_id;
 
-    // Retrieve image path from user_form table
-    $selectImage = "SELECT imgpath FROM user_form WHERE id = $user_id";
-    $resultImage = mysqli_query($conn, $selectImage);
-    if ($resultImage && mysqli_num_rows($resultImage) > 0) {
-        $rowImage = mysqli_fetch_assoc($resultImage);
-        $imagePath = $rowImage['imgpath'];
-    } else {
-        // Default image path if no image found
-        $imagePath = 'default_image_path.jpg';
-    }
+    // Use the fetched image path or set a default
+    $imagePath = !empty($row['imgpath']) ? $row['imgpath'] : 'default_image_path.jpg';
+} else {
+    // Handle case where user is not found in the database
+    // Redirect to login or show an error, depending on the application logic
+    header('Location: includes/login.php');
+    exit();
 }
 ?>
