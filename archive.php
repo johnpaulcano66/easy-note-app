@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 include 'includes/db_conn.php';
 
 if(isset($_GET['id'])) {
