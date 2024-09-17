@@ -1,11 +1,10 @@
 <?php
-
 if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+    session_start(); // Ensure this is at the top before any output
 }
 
 if (!isset($_SESSION['user_name'])) {
-    header('location: includes/login.php');
+    header('Location: includes/login.php');
     exit();
 }
 
@@ -23,15 +22,14 @@ if ($result && mysqli_num_rows($result) > 0) {
     $userName1 = $row['name'];
     $_SESSION['user_id'] = $user_id;
 
-    // Retrieve image path from user_form table
+    // Retrieve image path
     $selectImage = "SELECT imgpath FROM user_form WHERE id = $user_id";
     $resultImage = mysqli_query($conn, $selectImage);
     if ($resultImage && mysqli_num_rows($resultImage) > 0) {
         $rowImage = mysqli_fetch_assoc($resultImage);
         $imagePath = $rowImage['imgpath'];
     } else {
-        // Default image path if no image found
-        $imagePath = 'default_image_path.jpg';
+        $imagePath = 'default_image_path.jpg'; // Default image
     }
 }
 ?>
