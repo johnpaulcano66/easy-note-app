@@ -1,10 +1,6 @@
 <?php
 
 
-// Check if headers have already been sent
-if (headers_sent()) {
-    die('Headers already sent. Cannot start session.');
-}
 
 // Check if user is not logged in
 if (!isset($_SESSION['user_name'])) {
