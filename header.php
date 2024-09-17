@@ -1,6 +1,5 @@
 <?php
-// Start the session at the beginning of the script
-session_start();
+
 
 // Check if headers have already been sent
 if (headers_sent()) {
