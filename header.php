@@ -1,13 +1,6 @@
 <?php
 
 
-
-// Check if user is not logged in
-if (!isset($_SESSION['user_name'])) {
-    header('Location: includes/login.php');
-    exit();
-}
-
 // Include the database connection file
 @include 'includes/db_conn.php';
 
