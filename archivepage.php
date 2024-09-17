@@ -1,5 +1,7 @@
 
 <?php
+session_start(); // Ensure this is at the top before any output
+
 include_once 'dashboard.php'; 
 ?>
 
