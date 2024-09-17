@@ -1,5 +1,4 @@
 <?php
-// Ensure no output before this line
 include_once 'dashboard.php';  // Include dashboard.php, which in turn includes header.php
 ?>
 <!DOCTYPE html>
