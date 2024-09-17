@@ -1,6 +1,6 @@
 <?php
 include 'includes/db_conn.php';
-
+session_start();
 $error = array(); // Initialize error array
 
 if (isset($_POST['name']) && isset($_POST['password'])) {
