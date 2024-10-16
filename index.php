@@ -156,7 +156,7 @@ if (isset($_POST['submit'])) {
                 
                     <div class="main-container-left">
                         <div class="card">
-                            <h2 id="typewriter">Unlock Your Creativity <br> With <span id="easyNote"></span> Today!</h2>
+                            <h2 id="typewriter">CANO's product that can Unlock Your Creativity <br> With <span id="easyNote"></span> Today!</h2>
                             <p>
                             EasyNote revolutionizes the way you capture and manage your thoughts. EasyNote empowers you to effortlessly jot down ideas, organize your notes, and unleash your creativity without any hassle. Whether you're a writer, student, or professional, our user-friendly platform provides a seamless experience, allowing you to focus on what truly matters-bringing your ideas to life. 
                             </p>
